@@ -1,9 +1,8 @@
 #import math
 potential_pal = raw_input("What word would you like to check for palindromic nature? ").lower()
-reversed_pal = potential_pal[::-1]
 
 def isPalindrome(potential_pal):
-    if potential_pal == reversed_pal: print "Palindrome!"; return True
+    if potential_pal == potential_pal[::-1]: print "Palindrome!"; return True
     else: print "Not a palindrome."; return False
 
 isPalindrome(potential_pal)
