@@ -1,4 +1,5 @@
-num = int(raw_input("What number would you like to factorialize? "))
+from checkint import numbercheck
+num = int(numbercheck("What number would you like to factorialize? "))
 
 def factorializeThis(num):
     if num <= 1:
