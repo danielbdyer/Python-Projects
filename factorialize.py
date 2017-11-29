@@ -1,10 +1,5 @@
 from checkint import numbercheck
-num = int(numbercheck("What number would you like to factorialize? "))
+from calculator import Calculator
+calculate = Calculator()
 
-def factorializeThis(num):
-    if num <= 1:
-        return num
-    else:
-        return num * factorializeThis(num - 1)
-
-print(factorializeThis(num))
+print(calculate.fact(int(numbercheck("What number would you like to factorialize? "))))
