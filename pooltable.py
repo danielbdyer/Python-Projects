@@ -1,8 +1,13 @@
-import json, sys, itertools, time, math
-import datetime
+import json, sys, itertools, time, math, io, os, datetime, smtplib
 
 dateOfRecord = datetime.datetime.strftime(datetime.datetime.now(),'%m-%d-%Y')
 filename = (str(dateOfRecord) + '.json')
+
+if not os.path.isfile(filename) and not os.access(filename, os.R_OK):
+    with io.open(filename, 'w', encoding='utf-8') as file_object:
+        file_object.write(unicode([]))
+
+pooltable = []
 
 class PoolTable(object):
     num = itertools.count(1)
@@ -11,6 +16,7 @@ class PoolTable(object):
         self.num = self.num.next()
         self.occupied = "NOT OCCUPIED"
         self.minutes = None
+        self.seconds = None
         self.start_time = None
         self.stop_time = None
         self.time_elapsed = None
@@ -18,16 +24,13 @@ class PoolTable(object):
         ####################
 
     def giveOut(self):
-            self.checkOccupied()
+        if self.occupied == "NOT OCCUPIED":
+            self.occupied = "OCCUPIED"
             self.startTimer()
             return self.occupied
-
-    def checkOccupied(self):
-        if self.occupied == "OCCUPIED":
-            print "Pooltable " + str(self.num) + " is currently occupied."
         else:
-            self.occupied = "OCCUPIED"
-            return self.occupied
+            print "Pooltable " + str(self.num) + " is currently occupied."
+            return "Pooltable " + str(self.num) + " is currently occupied."
 
     def startTimer(self):
         self.start_time = datetime.datetime.now()
@@ -35,61 +38,33 @@ class PoolTable(object):
 
         ####################
 
-    #def checkTimer(self):
-        #self.time_elapsed = datetime.datetime.now() - self.start_time
-        #return self.time_elapsed
-
-        ####################
-
     def closeOut(self):
-        self.occupied = "NOT OCCUPIED"
-        self.stopTimer()
-        self.gatherTimeElapsed()
-        self.readableTime()
-        self.incurredCost()
-        self.writeEntry()
-        return self.occupied
+        if self.occupied == "OCCUPIED":
+            self.occupied = "NOT OCCUPIED"
+            self.stopTimer()
+            self.gatherTimeElapsed()
+            self.incurredCost()
+            self.writeEntry()
+            return self.occupied
+        else:
+            print "Pooltable " + str(self.num) + " has already been closed out."
+            return "Pooltable " + str(self.num) + " has already been closed out."
 
     def stopTimer(self):
         self.stop_time = datetime.datetime.now()
+        return self.stop_time
+
+        ####################
 
     def gatherTimeElapsed(self):
-        #if self.start_time != None:
         if self.stop_time != None:
             self.time_elapsed = self.stop_time - self.start_time
         else:
-            #self.time_elapsed = checkTimer()
             self.time_elapsed = datetime.datetime.now() - self.start_time
         self.seconds = self.time_elapsed.total_seconds()
         self.minutes = self.seconds / 60
-        print self.minutes
-        #else:
-            #self.stop_time = datetime.datetime.now()
-            #self.start_time = self.stop_time - datetime.timedelta(minutes=self.minutes)
-            #self.time_elapsed = self.stop_time - self.start_time
-            #return self.minutes
-
-    def viewVariables(self):
-        try:
-            print self.minutes
-        except AttributeError:
-            print "self.minutes does not exist"
-        try:
-            print self.start_time
-        except AttributeError:
-            print "self.start_time does not exist"
-        try:
-            print self.stop_time
-        except AttributeError:
-            print "self.stop_time does not exist"
-        try:
-            print self.time_elapsed
-        except AttributeError:
-            print "self.time_elapsed does not exist"
-        try:
-            print self.cost
-        except AttributeError:
-            print "self.cost does not exist"
+        timestr = self.readableTime()
+        return timestr
 
     def readableTime(self):
         if self.minutes < 60:
@@ -105,9 +80,14 @@ class PoolTable(object):
         self.cost = self.minutes * .5
         return "${:.2f}".format(self.cost)
 
+        ####################
+
     def writeEntry(self):
+        with open(filename, 'r') as file_object:
+            arrayOfDictionaries = json.load(file_object)
         with open(filename, 'w') as file_object:
-            json.dump(self.toDictionary(), file_object, sort_keys=True, indent=4)
+            arrayOfDictionaries.append(self.toDictionary())
+            json.dump(arrayOfDictionaries, file_object, sort_keys=True, indent=4)
 
     def toDictionary(self):
         return {"Pool Table Number":self.num,"Start Date Time":str(self.start_time),"End Date Time":str(self.stop_time),"Total Time Played":self.gatherTimeElapsed()}
@@ -115,9 +95,6 @@ class PoolTable(object):
         ####################
 
     def getStatus(self):
-        #if self.minutes is not None:
-            #print "Pool Table {0}: {1} for {2}".format(str(self.num),str(self.occupied),str(self.readableTime()))
-        #else:
         if self.occupied == "OCCUPIED":
             print "Pool Table {0}: {1} for {2}".format(str(self.num),str(self.occupied),str(self.gatherTimeElapsed()))
         else: # 'Not Occupied'
@@ -126,32 +103,8 @@ class PoolTable(object):
 
         ####################
 
-    #def stageTable(self,minutes):
-        #if self.occupied == "OCCUPIED":
-            #print "Pooltable " + str(self.num) + " is currently occupied."
-        #else:
-            #self.occupied = "OCCUPIED"
-            #self.minutes = minutes
-            #self.start_time = None
-            #self.stop_time = None
-        #return self.occupied, self.minutes
-
-        ####################
+pooltable = [ PoolTable() for i in range(12)]
 
 def viewAllTables():
     for tables in pooltable:
         tables.getStatus()
-
-pooltable = [ PoolTable() for i in range(12)]
-
-#pooltable[4].stageTable(85)
-#pooltable[6].stageTable(20)
-#pooltable[1].stageTable(55)
-
-while True:
-    choice = raw_input('Please input command: ')
-    if choice == 'q':
-        print "\n"
-        break
-    else:
-        result = eval(str(choice))
