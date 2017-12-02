@@ -11,13 +11,13 @@ def numbercheck(prompt):
         try:
             val = float(input(prompt))
         except ValueError:
-            print("That's not an int!")
+            print("That's not a valid number, sorry.")
             continue
         except NameError:
-            print("That's not even a number!")
+            print("That's not a valid number, sorry.")
             continue
         except TypeError:
-            print("Pssh! What kind of number is that?")
+            print("That's not a valid number, sorry.")
             continue
         else:
             break
