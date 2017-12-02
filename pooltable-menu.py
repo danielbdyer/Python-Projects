@@ -35,13 +35,13 @@ What would you like to do? ''')
         i = int(numbercheck("Which pool table number would you like to close out? "))
         if 0 < i < 13:
             pooltable[i-1].closeOut()
-        refreshScreen()
-        print("Please let the customer know that they owe ${0:.01} for {1} of game time.".format(pooltable[i-1].cost, pooltable[i-1].readableTime()))
+        print(chr(27) + "[2J")
+        viewAllTables()
         print("")
+        print("Please let the customer know that they owe ${0:.01} for {1} of game time.".format(pooltable[i-1].cost, pooltable[i-1].readableTime()))
         raw_input("Press Enter to continue...")
     elif choice == '4':
         emailReport()
         raw_input("Press Enter to continue...")
     else:
         print "Sorry, that is not a valid input."
-    else:
