@@ -25,17 +25,18 @@ class PoolTable(object):
         self.start_time = None
         self.stop_time = None
         self.time_elapsed = None
+        self.cost = None
 
         ####################
 
     def giveOut(self):
-        if self.occupied == "NOT OCCUPIED":
+        if self.occupied != "NOT OCCUPIED":
+            print "Pooltable " + str(self.num) + " is currently occupied."
+            return "Pooltable " + str(self.num) + " is currently occupied."
+        else:
             self.occupied = "OCCUPIED"
             self.startTimer()
             return self.occupied
-        else:
-            print "Pooltable " + str(self.num) + " is currently occupied."
-            return "Pooltable " + str(self.num) + " is currently occupied."
 
     def startTimer(self):
         self.start_time = datetime.datetime.now()
@@ -44,16 +45,16 @@ class PoolTable(object):
         ####################
 
     def closeOut(self):
-        if self.occupied == "OCCUPIED":
+        if self.occupied == "NOT OCCUPIED":
+            print "Pooltable " + str(self.num) + " has already been closed out."
+            return "Pooltable " + str(self.num) + " has already been closed out."
+        else:
             self.occupied = "NOT OCCUPIED"
             self.stopTimer()
             self.gatherTimeElapsed()
             self.incurredCost()
             self.writeEntry()
             return self.occupied
-        else:
-            print "Pooltable " + str(self.num) + " has already been closed out."
-            return "Pooltable " + str(self.num) + " has already been closed out."
 
     def stopTimer(self):
         self.stop_time = datetime.datetime.now()
@@ -144,6 +145,6 @@ def emailReport():
     server.login(smtp_user,smtp_pass)
     server.sendmail(smtp_user, toaddr, msg.as_string())
 
-    print 'Done'
+    print 'Sent! Please check your e-mail.'
 
     server.quit()
