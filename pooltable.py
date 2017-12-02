@@ -1,4 +1,9 @@
-import json, sys, itertools, time, math, io, os, datetime, smtplib
+import json, sys, itertools, time, math, io, os, datetime, smtplib, getpass
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.Utils import formatdate
+from email import Encoders
 
 dateOfRecord = datetime.datetime.strftime(datetime.datetime.now(),'%m-%d-%Y')
 filename = (str(dateOfRecord) + '.json')
@@ -108,3 +113,37 @@ pooltable = [ PoolTable() for i in range(12)]
 def viewAllTables():
     for tables in pooltable:
         tables.getStatus()
+
+def emailReport():
+    smtp_user = 'danielbdyer@gmail.com'
+    smtp_pass = getpass.getpass()
+    toaddr = 'danielbdyer@gmail.com'
+    attach = filename
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    subject = "Report for " + dateOfRecord
+    text = "Please see attached for your Pool Hall daily report."
+
+    msg = MIMEMultipart()
+    msg['From'] = smtp_user
+    msg['To'] = toaddr
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+
+    msg.attach( MIMEText(text) )
+
+    part = MIMEBase('application', "octet-stream")
+    part.set_payload( open(filename,"rb").read() )
+    Encoders.encode_base64(part)
+    part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(filename))
+    msg.attach(part)
+
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo_or_helo_if_needed()
+    server.starttls()
+    server.ehlo_or_helo_if_needed()
+    server.login(smtp_user,smtp_pass)
+    server.sendmail(smtp_user, toaddr, msg.as_string())
+
+    print 'Done'
+
+    server.quit()
