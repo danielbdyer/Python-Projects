@@ -1,4 +1,3 @@
-import unittest
 from pooltable import *
 
 while True:
