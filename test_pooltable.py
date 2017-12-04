@@ -58,4 +58,17 @@ class TestPoolTable(unittest.TestCase):
         pooltable[0].closeOut()
         self.assertTrue(pooltable[0].time_elapsed,not(None))
 
+#    def test_can_return_correct_JSON_string(self):
+#        pooltable[0].giveOut()
+#        time.sleep(.5)
+#        # pooltable[0].closeOut() section
+#        pooltable[0].occupied = "NOT OCCUPIED"
+#        pooltable[0].stopTimer()
+#        pooltable[0].gatherTimeElapsed()
+#        pooltable[0].incurredCost()
+#        resultingJSON = pooltable[0].toDictionary()
+#        print resultingJSON
+#        self.assertIn(("Cost" and "End Date Time" and "Start Date Time" and "Pool Table Number" and "Total Time Played"),resultingJSON)
+#        self.assertEqual(resultingJSON.items['Cost'], "$0.01")
+
 unittest.main(verbosity=2)

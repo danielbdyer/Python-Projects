@@ -96,7 +96,7 @@ class PoolTable(object):
             json.dump(arrayOfDictionaries, file_object, sort_keys=True, indent=4)
 
     def toDictionary(self):
-        return {"Pool Table Number":self.num,"Start Date Time":str(self.start_time),"End Date Time":str(self.stop_time),"Total Time Played":self.gatherTimeElapsed()}
+        return {"Pool Table Number":self.num,"Start Date Time":str(self.start_time),"End Date Time":str(self.stop_time),"Total Time Played":self.gatherTimeElapsed(),"Cost":self.incurredCost()}
 
         ####################
 
